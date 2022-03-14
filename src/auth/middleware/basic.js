@@ -20,5 +20,7 @@ module.exports =  async (req , res, next) => {
             req.user = validUser;
             next();
         }).catch(error => next(`invalid user ${error}`));
+    }else{
+        next('not auth recieved')
     }
 }

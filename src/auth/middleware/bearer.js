@@ -15,6 +15,8 @@ module.exports = async (req,res,next)=>{
             req.user = user;
             next();
         }).catch(error=>next(`invalid user ${error}`));
+    }else{
+        next('no token received')
     }
 }
 

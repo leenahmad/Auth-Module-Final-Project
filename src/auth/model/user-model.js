@@ -52,7 +52,7 @@ const userModel = (sequelize, DataTypes) => {
         let token = jwt.sign(
           {
             exp: Math.floor(Date.now() / 1000) + 1200,
-            username: user.username,
+            id: user.id,
           },
           SECRET
         );
@@ -72,7 +72,7 @@ const userModel = (sequelize, DataTypes) => {
       //check if the user is valid for the same token
     let validUser = jwt.verify(token, SECRET);
     try {
-      let user = await Users.findOne({ where: { username: validUser.username } });
+      let user = await Users.findOne({ where: { id: validUser.id } });
       return user;
     } catch (e) {
       throw new Error(`error varifying the token: ${e}`);
