@@ -3,7 +3,7 @@
 const  {Users}  = require("../model/index");
 
 
-module.exports = (Users) =>async (req,res,next)=>{
+module.exports = async (req,res,next)=>{
     if(req.headers['authorization']) {
         // 'Bearer token'
         let bearerHeaderParts= req.headers.authorization.split(' ');
@@ -11,7 +11,7 @@ module.exports = (Users) =>async (req,res,next)=>{
         let token = bearerHeaderParts.pop(); 
         console.log('Token >>> ',token);
        
-        Users.validateToken(token).then(user=>{
+        Users.verifyBearerToken(token).then(user=>{
             req.user = user;
             next();
         }).catch(error=>next(`invalid user ${error}`));

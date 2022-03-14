@@ -22,7 +22,7 @@ const userModel = (sequelize, DataTypes) => {
     },
     //ACL roles
     role: {
-      type: DataTypes.ENUM("admin", "writer", "editor", "user"),
+      type: DataTypes.ENUM("admin", "writer" , "editor" ,"user"),
       defaultValue: "user",
     },
     //ACL Actions and Permissions
@@ -30,9 +30,9 @@ const userModel = (sequelize, DataTypes) => {
       type: DataTypes.VIRTUAL,
       get() {
         const acl = {
-          user: ["read"],
-          writer: ["read", "create"],
-          editor: ["read", "create", "update"],
+          user: ["read", "create", "update"],
+          writer : ["read", "create"],
+          editor : ["read", "create", "update"],
           admin: ["read", "create", "update", "delete"],
         };
         return acl[this.role];
@@ -72,7 +72,7 @@ const userModel = (sequelize, DataTypes) => {
       //check if the user is valid for the same token
     let validUser = jwt.verify(token, SECRET);
     try {
-      let user = await findOne({ where: { username: validUser.username } });
+      let user = await Users.findOne({ where: { username: validUser.username } });
       return user;
     } catch (e) {
       throw new Error(`error varifying the token: ${e}`);
