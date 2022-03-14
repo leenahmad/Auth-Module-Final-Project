@@ -22,7 +22,12 @@ app.use(cors());
 
 //Routes
 app.get('/' , home);
-
+app.post('/signup',signup)
+app.post('/signin',basicAuth,signinHandler)
+app.put('/user/:id',bearerAuth,acl('create'),updateUserHandler);
+app.delete('/user/:id',bearerAuth,acl('delete'),deleteHandler);
+app.get('/user',bearerAuth,acl('read'),getUserInfo)
+app.get('/users',bearerAuth,acl('delete'),getAllUsersInfo)
 
 
 //Functions
@@ -38,6 +43,35 @@ async function signup(req, res) {
     } catch (error) {
         res.status(403).send("Error occurred");
     }
+}
+
+async function signinHandler(req,res){
+    res.status(201).send(req.user)
+}
+
+async function updateUserHandler(req,res){
+    const reqBody = req.body;
+    const id = req.params.id;
+    await Users.update(reqBody,{where:{ id:id}});
+    res.status(200).send(await Users.findOne({where:{id:id}}))
+}
+
+async function deleteHandler(req,res){
+    const id = req.params.id;
+    await Users.destroy({where:{id:id}})
+    res.status(200).json({
+        action: 'delete',
+        userId: id,
+        username: req.user.username,
+    })
+}
+
+async function getUserInfo(req,res){
+    res.status(200).send(req.user)
+}
+async function getAllUsersInfo(req,res){
+    const usersInfo = await Users.findAll()
+    res.status(200).send(usersInfo)
 }
 
 
