@@ -16,8 +16,9 @@ const router = express.Router();
 //Routes
 router.post('/signup',signup)
 router.post('/signin',basicAuth,signinHandler)
-router.put('/user/:id',bearerAuth,acl('create'),updateUserHandler);
-router.delete('/user/:id',bearerAuth,acl('delete'),deleteHandler);
+router.put('/user',bearerAuth,acl('create'),userEditHandler)
+router.put('/users/:id',bearerAuth,acl('delete'),updateUserHandler);
+router.delete('/users/:id',bearerAuth,acl('delete'),deleteHandler);
 router.get('/user',bearerAuth,acl('read'),getUserInfo)
 router.get('/users',bearerAuth,acl('delete'),getAllUsersInfo)
 
@@ -62,4 +63,9 @@ async function getAllUsersInfo(req,res){
     res.status(200).send(usersInfo)
 }
 
+async function userEditHandler(req,res){
+   const reqBody=req.body;
+   await Users.update(reqBody,{where:{id:req.user.id}})
+   res.status(200).send(await Users.findOne({where:{id:req.user.id}}))
+}
 module.exports = router;
